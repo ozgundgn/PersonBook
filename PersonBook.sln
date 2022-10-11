@@ -13,9 +13,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{B3FDEF02-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{2087A951-8274-4414-9FB3-A1995B6B46DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventRabbitMQ", "EventRabbitMQ\EventRabbitMQ.csproj", "{9FD346A4-0EFE-447B-94AD-4CB8042D1DB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceConnectUtils", "ServiceConnectUtils\ServiceConnectUtils.csproj", "{009185D2-53A5-4D78-B6F0-407745076D5C}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FD346A4-0EFE-447B-94AD-4CB8042D1DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FD346A4-0EFE-447B-94AD-4CB8042D1DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FD346A4-0EFE-447B-94AD-4CB8042D1DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FD346A4-0EFE-447B-94AD-4CB8042D1DB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{009185D2-53A5-4D78-B6F0-407745076D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{009185D2-53A5-4D78-B6F0-407745076D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{009185D2-53A5-4D78-B6F0-407745076D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{009185D2-53A5-4D78-B6F0-407745076D5C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9FD346A4-0EFE-447B-94AD-4CB8042D1DB1} = {E5DCBECD-7D5C-413B-81BB-CF267BA90919}
+		{009185D2-53A5-4D78-B6F0-407745076D5C} = {E5DCBECD-7D5C-413B-81BB-CF267BA90919}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B6B60C5-8419-4382-B8B3-81ABAB43C5D6}
