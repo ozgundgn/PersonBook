@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E5DCBECD-7D5C-413B-81BB-CF267BA90919}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroServiceContact", "MicroServiceContact", "{4C68A342-A311-46CE-BAB6-7ADD9C199D30}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroServiceReport", "MicroServiceReport", "{96FB2C5D-1E5B-411D-8DA0-4C4685180E89}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{B3FDEF02-503D-4B1E-A1F9-215BFDCAC836}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{2087A951-8274-4414-9FB3-A1995B6B46DE}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B6B60C5-8419-4382-B8B3-81ABAB43C5D6}
+	EndGlobalSection
+EndGlobal
