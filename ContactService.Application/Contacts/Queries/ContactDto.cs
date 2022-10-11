@@ -12,6 +12,8 @@ namespace ContactService.Application.Contacts.Queries
         public int PersonId { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string FullName { get { return string.Concat(this.Name, " ", this.Surname); } }
+
 
     }
 }

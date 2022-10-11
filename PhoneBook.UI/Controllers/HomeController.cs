@@ -23,7 +23,6 @@ namespace PhoneBook.UI.Controllers
             _logger = logger;
         }
 
-
         #region Persons
         public IActionResult Index()
         {
@@ -121,6 +120,8 @@ namespace PhoneBook.UI.Controllers
             return Ok();
         }
         #endregion
+
+        #region Reports
         public IActionResult Report()
         {
             var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/getall");
@@ -175,7 +176,9 @@ namespace PhoneBook.UI.Controllers
 
             ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/" + id, HttpMethod.Delete, id);
             return Ok();
-        }
+        } 
+        #endregion
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
