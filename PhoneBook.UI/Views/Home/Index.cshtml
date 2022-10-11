@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Create and Edit Person's Information</p>
+</div>
+
+
+<div class="row">
+        <input type="hidden" class="form-control" style="width:350px" id="personId">
+
+    <div class="mb-3">
+        <label for="personName" class="form-label">Name</label>
+        <input type="text" class="form-control" style="width:350px" id="personName">
+    </div>
+    <div class="mb-3">
+        <label for="personSurname" class="form-label">Surname</label>
+        <input type="text" class="form-control" style="width:350px" id="personSurname">
+    </div>
+    <div class="mb-3">
+        <label for="personCompany" class="form-label">Company</label>
+        <input type="text" class="form-control" style="width:350px" id="personCompany">
+    </div>
+    <button type="submit" id="btnSave" class="btn btn-primary m-2">Save</button>
+    <button type="submit" id="btnAddNew" class="btn btn-secondary m-2">Add New Person</button>
+
+    <button type="button" id="btnReload" style="width:100px" class="btn btn-secondary m-5">Reload Table</button>
+
+
+</div>
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-header-title" style="color:midnightblue">Person List </h5>
+        </div>
+        <div class="card-body">
+
+            <table id="personTable" class=" table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Company</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbdoy></tbdoy>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#personTable').DataTable({
+            ajax: {
+                'url': '/home/PersonList',
+                "dataSrc": "data"
+            },
+            columns: [
+                { data: 'name', name: "Name" },
+                { data: 'surname', name: "Surname" },
+                { data: 'company', name: "Company" },
+                {
+                    data: 'id', render: function(data, type, row, meta) {
+                        return "<button class='btn btn-primary' style='margin-right:5px' onclick='edit(" + JSON.stringify(row) + ")'>Edit</button> <button class='btn btn-danger' style='margin-right:5px' onclick='deletePerson(" + JSON.stringify(row) + ")'> Delete </button>";
+
+                    }
+                }
+            ]
+        });
+
+         $("#btnSave").click(function() {
+            var person = {
+                Name: $("#personName").val(),
+                Surname: $("#personSurname").val(),
+                Company: $("#personCompany").val(),
+                Id: $("#personId").val(),
+
+            };
+
+             $.ajax({
+                 url: "/home/PersonSave",
+                 data: person
+        }).done(function(data) {
+           alert("saved");
+           reloadGrid();
+        });
+        });
+        
+        
+        $("#btnAddNew").click(function() {
+           reset();
+       });
+
+        $("#btnReload").click(function() {
+            reloadGrid();
+        });
+    });
+
+    function edit(person) {
+    
+          $("#personName").val(person.name);
+          $("#personSurname").val(person.surname);
+          $("#personCompany").val(person.company);
+          $("#personId").val(person.id);
+};
+
+function deletePerson(person) {
+    console.log(person);
+     $.ajax({
+                 url: "/home/PersonDelete",
+                 data: {id:person.id}
+        }).done(function(data) {
+           alert("deleted");
+           reloadGrid();
+        });
+};
+
+    function reset() {
+        $("#personName").val("");
+        $("#personSurname").val("");
+        $("#personCompany").val("");
+        $("#personId").val("");
+};
+    
+
+function reloadGrid() {
+    $('#personTable').DataTable().clear();
+    $('#personTable').DataTable().ajax.reload();
+}
+
+</script>
