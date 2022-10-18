@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ReportService.Application.Common.Interfaces;
 
 namespace ReportService.Application.Reports.Commands
@@ -15,8 +16,11 @@ namespace ReportService.Application.Reports.Commands
 
         public async Task<Unit> Handle(DeleteReportCommand request, CancellationToken cancellationToken)
         {
+            if (request == null)
+                throw new ArgumentException("There's nothing to delete.");
+
             var entity = await _context.Reports
-           .FindAsync(new object[] { request.Id }, cancellationToken);
+           .FirstOrDefaultAsync(x => x.Id == request.Id);
 
             if (entity == null)
                 throw new ArgumentException("There's nothing to delete");

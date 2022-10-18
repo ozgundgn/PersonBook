@@ -10,7 +10,7 @@ namespace ReportService.Domain.Entities
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id {get;}
+        public int Id { get; set; }
         [Column("createddate")]
         public DateTime CreatedDate { get; set; }
 

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ReportService.Test.Models
 {
-    public class GetReportsByLocationQueryTestData : IEnumerable<object[]>
+    public class GetAllReportsQueryTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { new GetReportsByLocationQuery { Location = "c//deneme" } };
+            yield return new object[] { new GetAllReportsQuery { } };
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
