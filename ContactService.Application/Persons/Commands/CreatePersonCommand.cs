@@ -33,7 +33,6 @@ namespace ContactService.Application.Persons.Commands
 
             entity.Uuid = Guid.NewGuid();
             var responseEntity = _context.Persons.Add(entity);
-            responseEntity.State = EntityState.Added;
             await _context.SaveChangesAsync(cancellationToken);
 
             return entity.Uuid;
