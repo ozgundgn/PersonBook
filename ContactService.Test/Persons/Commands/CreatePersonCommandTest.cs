@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using Moq;
 using Xunit;
-namespace ContactService.Test.Commands
+namespace ContactService.Test.Persons.Commands
 {
     public class CreatePersonCommandTest
     {
         //private readonly Mock<IRequestHandler<CreateContactCommand,int>> _createContactCommandHandlerMock;
-        private  Mock<ContactDbContext> _mockContext;
+        private Mock<ContactDbContext> _mockContext;
         private IMapper _mapper;
 
         private CreatePersonCommandHandler _createPersonCommandHandler;
@@ -53,14 +53,14 @@ namespace ContactService.Test.Commands
 
             // Act
             var result = await _createPersonCommandHandler.Handle(contact, new CancellationToken());
-            
+
             // Assert
             Assert.IsType<Guid>(result);
         }
         [Fact]
         public async Task CreatePersonCommand_NullDataSend_ReturnsEqualsArgumentException()
         {
-         
+
             await Assert.ThrowsAsync<ArgumentException>(async () => await _createPersonCommandHandler.Handle(null, new CancellationToken()));
         }
 

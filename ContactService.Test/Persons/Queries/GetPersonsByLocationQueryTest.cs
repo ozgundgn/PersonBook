@@ -1,6 +1,6 @@
-using AutoMapper;
-using ContactService.Application.Contacts.Commands;
+ï»¿using AutoMapper;
 using ContactService.Application.Contacts.Queries;
+using ContactService.Application.Persons.Queries;
 using ContactService.Domain.Entities;
 using ContactService.Infrastructure.Persistence;
 using ContactService.Test.Models;
@@ -9,27 +9,32 @@ using MockQueryable.Moq;
 using Moq;
 using System.Data.Entity.Infrastructure;
 using Xunit;
-namespace ContactService.Test.Contacts.Queries
+
+namespace ContactService.Test.Persons.Queries
 {
-    public class GetAllContactsQueryTest
+    public class GetPersonsByLocationQueryTest
     {
         private Mock<ContactDbContext> _mockContext;
-        private Mock<DbSet<Contact>> _mockSetContact;
         private Mock<DbSet<Person>> _mockSetPerson;
+        private IMapper _mapper;
 
 
-        private GetAllContactsQueryHandler _getAllContactsCommandHandler;
 
-        public GetAllContactsQueryTest()
+        private GetPersonsByLocationQueryHandler _getByLocationReportCommandHandler;
+
+        public GetPersonsByLocationQueryTest()
         {
             _mockContext = new Mock<ContactDbContext>();
-            _mockSetContact = new Mock<DbSet<Contact>>();
             _mockSetPerson = new Mock<DbSet<Person>>();
+            _mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Person, PersonDto>().ReverseMap();
+            }).CreateMapper();
         }
 
         [Theory]
-        [ClassData(typeof(GetAllContactsQueryTestData))]
-        public async Task GetAllContactsCommand_SimpleDataSend_ReturnsEquals(GetAllContactsQuery contact)
+        [ClassData(typeof(GetPersonsByLocationQueryTestData))]
+        public async Task GetPersonsByLocationQuery_SimpleDataGetList_ReturnsEqualsList(GetPersonsByLocationQuery contact)
         {
 
             var dataContacts = new List<Contact>
@@ -37,17 +42,17 @@ namespace ContactService.Test.Contacts.Queries
                 new Contact {  Id = 1,
                 Email = "testupdat1e@gmail.com",
                 PersonId = 3,
-                Location = "Kocaeli",
-                PhoneNumber = "032254788965",Person=new Person{Company="deneme2",Name="Aylin",Surname="Hayat"} },
+                Location = "KÄ±rklareli",
+                PhoneNumber = "032254788965",Person=new Person{Company="deneme2",Name="Aylin",Surname="Hayat" } },
                  new Contact {  Id = 2,
                 Email = "testupdate2@gmail.com",
                 PersonId = 2,
-                Location = "Urfa",
-                PhoneNumber = "022254788965" ,Person=new Person{Company="deneme3",Name="Güneþ",Surname="Ateþ"}},
+                Location = "Edirne",
+                PhoneNumber = "022254788965" ,Person=new Person{Company="deneme3",Name="GÃ¼neÅŸ",Surname="AteÅŸ"}},
                  new Contact {  Id = 3,
                 Email = "testupdate3@gmail.com",
                 PersonId = 2,
-                Location = "Kýrklareli",
+                Location = "KÄ±rklareli",
                 PhoneNumber = "012254788965",Person=new Person{Company="deneme",Name="Hasan",Surname="Ali"}
                 },
             };
@@ -58,29 +63,20 @@ namespace ContactService.Test.Contacts.Queries
             {
                new Person{Id=1,Company="deneme2",Name="Aylin",Surname="Hayat"},
                new Person{Id=2,Company="deneme",Name="Hasan",Surname="Ali"},
-               new Person{Id=3,Company="deneme3",Name="Güneþ",Surname="Ateþ"}
+               new Person{Id=3,Company="deneme3",Name="GÃ¼neÅŸ",Surname="AteÅŸ"}
             };
 
             var personsMock = dataPersons.AsQueryable().BuildMockDbSet();
 
 
-
-
             _mockContext.Setup(m => m.Contacts).Returns(contactMock.Object);
             _mockContext.Setup(m => m.Persons).Returns(personsMock.Object);
-            var userId = 1;
 
-            //contactMock.Setup(x => x.FindAsync(userId)).ReturnsAsync((int[] ids) =>
-            //{
-            //    var id = ids[0];
-            //    return dataContacts.Find(x=>x.Id==id);
-            //});
-
-            _getAllContactsCommandHandler = new GetAllContactsQueryHandler(_mockContext.Object);
+            _getByLocationReportCommandHandler = new GetPersonsByLocationQueryHandler(_mockContext.Object, _mapper);
 
 
-            var result = await _getAllContactsCommandHandler.Handle(contact, new CancellationToken());
-            Assert.IsType<List<ContactDto>>(result);
+            var result = await _getByLocationReportCommandHandler.Handle(contact, new CancellationToken());
+            Assert.IsType<List<PersonDto>>(result);
         }
 
     }

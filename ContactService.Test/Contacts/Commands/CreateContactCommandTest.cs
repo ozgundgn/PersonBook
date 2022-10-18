@@ -9,13 +9,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
-namespace ContactService.Test.Commands
+namespace ContactService.Test.Contacts.Commands
 {
     public class CreatelContactsQueryTest
     {
         //private readonly Mock<IRequestHandler<CreateContactCommand,int>> _createContactCommandHandlerMock;
-        private  Mock<ContactDbContext> _mockContext;
-        private  Mock<DbSet<Contact>> _mockSetContact;
+        private Mock<ContactDbContext> _mockContext;
+        private Mock<DbSet<Contact>> _mockSetContact;
         //private readonly Mock<IMapper> mapper;
 
         private readonly CreateContactCommandHandler _createContactCommandHandler;
@@ -60,7 +60,7 @@ namespace ContactService.Test.Commands
         [Fact]
         public async Task CreateContactCommand_NullDataSend_ReturnsEqualsArgumentException()
         {
-         
+
             await Assert.ThrowsAsync<ArgumentException>(async () => await _createContactCommandHandler.Handle(null, new CancellationToken()));
         }
 
