@@ -1,6 +1,6 @@
 ﻿using ContactService.Application.Common.Interfaces;
 using MediatR;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace ContactService.Application.Contacts.Commands
 {
@@ -16,8 +16,10 @@ namespace ContactService.Application.Contacts.Commands
 
         public async Task<Unit> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Contacts
-           .FindAsync(new object[] { request.Id }, cancellationToken);
+            if(request==null)
+                throw new ArgumentException("There's nothing to delete");
+
+            var entity = await _context.Contacts.FirstOrDefaultAsync(x=>x.Id==request.Id);
 
             if (entity == null)
                 throw new ArgumentException("There's nothing to delete");

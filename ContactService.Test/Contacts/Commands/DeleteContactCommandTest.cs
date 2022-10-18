@@ -8,6 +8,7 @@ using ContactService.Test.Models;
 using FakeItEasy.Sdk;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
 using Moq;
 using System.Data.Entity.Infrastructure;
 using Xunit;
@@ -35,26 +36,29 @@ namespace ContactService.Test.Commands
         {
             //Arrange
 
-            var data = new List<Contact>
+            var dataContacts = new List<Contact>
             {
                 new Contact {  Id = 1,
                 Email = "testupdat1e@gmail.com",
                 PersonId = 3,
                 Location = "Kocaeli",
                 PhoneNumber = "032254788965" }
-            }.AsQueryable();
+            };
 
-            _mockSetContact.As<IDbAsyncEnumerable<Contact>>()
-        .Setup(m => m.GetAsyncEnumerator())
-        .Returns(new TestDbAsyncEnumerator<Contact>(data.GetEnumerator()));
+            var contactMock = dataContacts.AsQueryable().BuildMockDbSet();
 
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
 
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.Expression).Returns(data.Expression);
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+        //    _mockSetContact.As<IDbAsyncEnumerable<Contact>>()
+        //.Setup(m => m.GetAsyncEnumerator())
+        //.Returns(new TestDbAsyncEnumerator<Contact>(data.GetEnumerator()));
 
-            _mockContext.Setup(m => m.Contacts).Returns(_mockSetContact.Object);
+        //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+
+        //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.Expression).Returns(data.Expression);
+        //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.ElementType).Returns(data.ElementType);
+        //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+
+            _mockContext.Setup(m => m.Contacts).Returns(contactMock.Object);
 
             // Act
             var result = await _deleteContactCommandHandler.Handle(contact, new CancellationToken());

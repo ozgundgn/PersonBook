@@ -13,12 +13,10 @@ namespace ContactService.Application.Contacts.Queries
     public class GetContactsByLocationQueryHandler : IRequestHandler<GetContactsByLocationQuery, List<ContactDto>>
     {
         private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public GetContactsByLocationQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetContactsByLocationQueryHandler(IApplicationDbContext context )
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<List<ContactDto>> Handle(GetContactsByLocationQuery request, CancellationToken cancellationToken)

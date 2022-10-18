@@ -8,6 +8,7 @@ using ContactService.Test.Models;
 using FakeItEasy.Sdk;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
 using Moq;
 using System.Data.Entity.Infrastructure;
 using Xunit;
@@ -16,37 +17,48 @@ namespace ContactService.Test.Commands
     public class UpdateContactCommandTest
     {
         private readonly Mock<ContactDbContext> _mockContext;
-
+        private new Mock<DbSet<Contact>> _mockSetContact;
         public UpdateContactCommandTest()
         {
             _mockContext = new Mock<ContactDbContext>();
+            _mockSetContact = new Mock<DbSet<Contact>>();
         }
 
         [Fact]
         public async Task UpdateContactCommand_SimpleDataUpdate_ReturnsEqualsVoid()
         {
 
-
-            var _mockSetContact = new Mock<DbSet<Contact>>();
-
-            var data = new List<Contact>
+            var dataContacts = new List<Contact>
             {
                 new Contact {  Id = 1,
                 Email = "testupdat1e@gmail.com",
                 PersonId = 3,
                 Location = "Kocaeli",
-                PhoneNumber = "032254788965" }
-            }.AsQueryable();
+                PhoneNumber = "032254788965",Person=new Person{Company="deneme2",Name="Aylin",Surname="Haklý" }
+            } };
 
-            _mockSetContact.As<IDbAsyncEnumerable<Contact>>()
-        .Setup(m => m.GetAsyncEnumerator())
-        .Returns(new TestDbAsyncEnumerator<Contact>(data.GetEnumerator()));
+            
+            var contactMock = dataContacts.AsQueryable().BuildMockDbSet();
 
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+    
+            _mockContext.Setup(m => m.Contacts).Returns(contactMock.Object);
 
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.Expression).Returns(data.Expression);
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+            //    _mockSetContact.As<IDbAsyncEnumerable<Contact>>()
+            //.Setup(m => m.GetAsyncEnumerator())
+            //.Returns(new TestDbAsyncEnumerator<Contact>(data.GetEnumerator()));
+
+            //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+
+            //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.Expression).Returns(data.Expression);
+            //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.ElementType).Returns(data.ElementType);
+            //    _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+            //var id = 1;
+            //contactMock.Setup(x => x.FindAsync(id)).ReturnsAsync((object[] ids) =>
+            //{
+            //    var id = (int)ids[0];
+            //    return dataContacts.Find(x => x.Id == id);
+            //});
+
 
             var _updateContactCommandHandler = new UpdateContactComandHandler(_mockContext.Object);
             //Arrange
