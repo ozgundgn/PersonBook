@@ -25,6 +25,6 @@ namespace ContactService.Domain.Entities
         public string Surname { get; set; }
         [Column("company")]
         public string? Company { get; set; }
-        public ICollection<Contact>? Contacts { get; set; }
+        public virtual ICollection<Contact>? Contacts { get; set; }
     }
 }

@@ -16,29 +16,35 @@ namespace ContactService.Application.Contacts.Commands
     public class UpdateContactComandHandler : IRequestHandler<UpdateContactCommand>
     {
         private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public UpdateContactComandHandler(IApplicationDbContext context, IMapper mapper)
+        public UpdateContactComandHandler(IApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Contacts
-           .FindAsync(new object[] { request.Id }, cancellationToken);
+            try
+            {
+                var entity = await _context.Contacts.FindAsync(new object[] { request.Id }, cancellationToken);
 
-            if (entity == null)
-                throw new ArgumentException(string.Format("There's nothing to update for id:{0}", request.Id));
+                if (entity == null)
+                    throw new ArgumentException(string.Format("There's nothing to update for id:{0}", request.Id));
 
-            entity.Location = request.Location;
-            entity.PhoneNumber = request.PhoneNumber;
-            entity.Email = request.Email;
+                entity.Location = request.Location;
+                entity.PhoneNumber = request.PhoneNumber;
+                entity.Email = request.Email;
 
-            await _context.SaveChangesAsync(cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+                return Unit.Value;
+            }
+            catch (Exception ex)
+            {
+
+                throw new ArgumentException(string.Format("An exception occured. Exception {0}", ex.Message));
+            }
+
         }
     }
 }

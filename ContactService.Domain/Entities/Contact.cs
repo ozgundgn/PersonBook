@@ -15,7 +15,7 @@ namespace ContactService.Domain.Entities
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; }
+        public int Id { get;set; }
         [Column("phonenumber")]
 
         public string PhoneNumber { get; set; }
@@ -27,7 +27,7 @@ namespace ContactService.Domain.Entities
 
         [Column("personid")]
         public int PersonId { get; set; }
-        public Person Person { get; set; }
+        public virtual Person Person { get; set; }
 
 
     }
