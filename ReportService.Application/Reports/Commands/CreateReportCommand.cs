@@ -33,7 +33,6 @@ namespace ReportService.Application.Reports.Commands
             entity.Path = @"C:\POCReports\" + request.Uuid.ToString();
             entity.CreatedDate = DateTime.Now;
             var responseEntity = _context.Reports.Add(entity);
-            responseEntity.State = EntityState.Added;
             await _context.SaveChangesAsync(cancellationToken);
 
             return entity.Uuid;

@@ -11,15 +11,15 @@ using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using Moq;
 using Xunit;
-namespace ContactService.Test.Persons.Commands
+namespace ContactService.Test.Commands
 {
     public class CreatePersonCommandTest
     {
         //private readonly Mock<IRequestHandler<CreateContactCommand,int>> _createContactCommandHandlerMock;
-        private Mock<ContactDbContext> _mockContext;
+        private  Mock<ContactDbContext> _mockContext;
         private IMapper _mapper;
 
-        private CreatePersonCommandHandler _createPersonCommandHandler;
+        private readonly CreatePersonCommandHandler _createPersonCommandHandler;
 
         public CreatePersonCommandTest()
         {
@@ -30,7 +30,6 @@ namespace ContactService.Test.Persons.Commands
             _mockContext = new Mock<ContactDbContext>();
             // Init
             _createPersonCommandHandler = new CreatePersonCommandHandler(_mockContext.Object, _mapper);
-
         }
 
         [Theory]
@@ -46,21 +45,18 @@ namespace ContactService.Test.Persons.Commands
             };
 
             var personsMock = dataPersons.AsQueryable().BuildMockDbSet();
-
             _mockContext.Setup(m => m.Persons).Returns(personsMock.Object);
-
-            _createPersonCommandHandler = new CreatePersonCommandHandler(_mockContext.Object, _mapper);
 
             // Act
             var result = await _createPersonCommandHandler.Handle(contact, new CancellationToken());
-
+            
             // Assert
             Assert.IsType<Guid>(result);
         }
         [Fact]
         public async Task CreatePersonCommand_NullDataSend_ReturnsEqualsArgumentException()
         {
-
+         
             await Assert.ThrowsAsync<ArgumentException>(async () => await _createPersonCommandHandler.Handle(null, new CancellationToken()));
         }
 
