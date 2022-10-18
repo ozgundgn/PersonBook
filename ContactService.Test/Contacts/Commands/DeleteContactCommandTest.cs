@@ -12,7 +12,8 @@ using MockQueryable.Moq;
 using Moq;
 using System.Data.Entity.Infrastructure;
 using Xunit;
-namespace ContactService.Test.Commands
+namespace ContactService.Test.Contacts.Commands
+
 {
     public class DeleteContactCommandTest
     {

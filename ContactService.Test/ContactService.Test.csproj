@@ -30,8 +30,4 @@
     <ProjectReference Include="..\ContactService.Infrastructure\ContactService.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Persons\Queries\" />
-  </ItemGroup>
-
 </Project>
