@@ -1,11 +1,8 @@
-﻿
-using System.Net.Sockets;
-using System.Text;
+﻿using System.Text;
 using EventRabbitMQ;
 using EventRabbitMQ.Events.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RabbitMQ.Client.Exceptions;
 using IBasicProperties = RabbitMQ.Client.IBasicProperties;
 
 namespace EventBusRabbitMQ.Producer
