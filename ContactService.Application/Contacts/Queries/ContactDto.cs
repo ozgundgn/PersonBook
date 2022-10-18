@@ -3,7 +3,7 @@ using ContactService.Domain.Entities;
 
 namespace ContactService.Application.Contacts.Queries
 {
-    public class ContactDto : IMapFrom<Contact>
+    public class ContactDto 
     {
         public int Id { get; set; }
         public string PhoneNumber { get; set; }
@@ -13,7 +13,6 @@ namespace ContactService.Application.Contacts.Queries
         public string Name { get; set; }
         public string Surname { get; set; }
         public string FullName { get { return string.Concat(this.Name, " ", this.Surname); } }
-
 
     }
 }

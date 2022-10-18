@@ -12,9 +12,12 @@ namespace ContactService.Infrastructure.Persistence
         public ContactDbContext(DbContextOptions<ContactDbContext> options) : base(options)
         {
         }
+        public ContactDbContext()
+        {
 
-        public DbSet<Person> Persons => Set<Person>();
-        public DbSet<Contact> Contacts => Set<Contact>();
+        }
+        public virtual DbSet<Person> Persons => Set<Person>();
+        public virtual DbSet<Contact> Contacts => Set<Contact>();
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

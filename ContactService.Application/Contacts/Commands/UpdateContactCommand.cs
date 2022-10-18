@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ContactService.Application.Common.Interfaces;
 using MediatR;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace ContactService.Application.Contacts.Commands
 {
@@ -16,18 +16,18 @@ namespace ContactService.Application.Contacts.Commands
     public class UpdateContactComandHandler : IRequestHandler<UpdateContactCommand>
     {
         private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public UpdateContactComandHandler(IApplicationDbContext context, IMapper mapper)
+        public UpdateContactComandHandler(IApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Contacts
-           .FindAsync(new object[] { request.Id }, cancellationToken);
+            if (request == null)
+                throw new ArgumentException("There's nothing to update");
+
+            var entity = await _context.Contacts.FirstOrDefaultAsync(x => x.Id == request.Id);
 
             if (entity == null)
                 throw new ArgumentException(string.Format("There's nothing to update for id:{0}", request.Id));
@@ -39,6 +39,7 @@ namespace ContactService.Application.Contacts.Commands
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
+
         }
     }
 }

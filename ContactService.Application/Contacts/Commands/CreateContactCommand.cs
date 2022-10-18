@@ -33,7 +33,6 @@ namespace ContactService.Application.Contacts.Commands
 
 
             var responseEntity = _context.Contacts.Add(entity);
-            responseEntity.State = EntityState.Added;
             var id= _context.SaveChangesAsync(cancellationToken);
             return id.Id;
         }

@@ -15,7 +15,7 @@ namespace ContactService.Domain.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
 
-        public int Id { get; }
+        public int Id { get; set; }
 
         [Column("uuid")]
         public Guid Uuid { get; set; }
@@ -25,6 +25,6 @@ namespace ContactService.Domain.Entities
         public string Surname { get; set; }
         [Column("company")]
         public string? Company { get; set; }
-        public ICollection<Contact>? Contacts { get; set; }
+        public virtual ICollection<Contact>? Contacts { get; set; }
     }
 }

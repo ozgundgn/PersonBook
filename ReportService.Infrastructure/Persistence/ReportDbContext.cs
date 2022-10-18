@@ -10,8 +10,11 @@ namespace ReportService.Infrastructure.Persistence
         public ReportDbContext(DbContextOptions<ReportDbContext> options) : base(options)
         {
         }
+        public ReportDbContext()
+        {
 
-        public DbSet<Report> Reports => Set<Report>();
+        }
+        public virtual  DbSet<Report> Reports => Set<Report>();
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
