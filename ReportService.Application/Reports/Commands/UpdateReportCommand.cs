@@ -21,6 +21,9 @@ namespace ReportService.Application.Reports.Commands
 
         public async Task<Unit> Handle(UpdateReportCommand request, CancellationToken cancellationToken)
         {
+            if (request == null)
+                throw new ArgumentException("There's nothing to update.");
+
             var entity = await _context.Reports.FirstOrDefaultAsync(x => x.Uuid == request.Uuid);
 
             if (entity == null)
