@@ -15,7 +15,7 @@ namespace ContactService.Domain.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
 
-        public int Id { get; }
+        public int Id { get; set; }
 
         [Column("uuid")]
         public Guid Uuid { get; set; }

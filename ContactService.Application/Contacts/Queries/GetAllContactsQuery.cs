@@ -22,6 +22,7 @@ namespace ContactService.Application.Contacts.Queries
         public async Task<List<ContactDto>> Handle(GetAllContactsQuery request, CancellationToken cancellationToken)
         {
 
+            var a =await _context.Contacts.ToListAsync();
             return await _context.Contacts
              .OrderBy(x => x.Email)
              .Select(x => new ContactDto

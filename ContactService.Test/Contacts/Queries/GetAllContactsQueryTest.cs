@@ -6,6 +6,7 @@ using ContactService.Infrastructure.Persistence;
 using ContactService.Test.Contacts.Queries;
 using ContactService.Test.Models;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
 using Moq;
 using System.Data.Entity.Infrastructure;
 using Xunit;
@@ -15,6 +16,8 @@ namespace ContactService.Test.Commands
     {
         private  Mock<ContactDbContext> _mockContext;
         private  Mock<DbSet<Contact>> _mockSetContact;
+        private Mock<DbSet<Person>> _mockSetPerson;
+
 
         private GetAllContactsQueryHandler _getAllContactsCommandHandler;
 
@@ -22,6 +25,7 @@ namespace ContactService.Test.Commands
         {
             _mockContext = new Mock<ContactDbContext>();
             _mockSetContact = new Mock<DbSet<Contact>>();
+            _mockSetPerson = new Mock<DbSet<Person>>();
         }
 
         [Theory]
@@ -29,7 +33,7 @@ namespace ContactService.Test.Commands
         public async Task GetAllContactsCommand_SimpleDataSend_ReturnsEquals(GetAllContactsQuery contact)
         {
 
-            var data = new List<Contact>
+            var dataContacts = new List<Contact>
             {
                 new Contact {  Id = 1,
                 Email = "testupdat1e@gmail.com",
@@ -47,20 +51,21 @@ namespace ContactService.Test.Commands
                 Location = "Kýrklareli",
                 PhoneNumber = "012254788965",Person=new Person{Company="deneme",Name="Hasan",Surname="Ali"}
                 },
-            }.AsQueryable();
+            };
 
-            _mockSetContact.As<IDbAsyncEnumerable<Contact>>()
-                .Setup(m => m.GetAsyncEnumerator())
-                .Returns(new TestDbAsyncEnumerator<Contact>(data.GetEnumerator()));
+            var contactMock = dataContacts.AsQueryable().BuildMockDbSet();
 
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+            var dataPersons = new List<Person>
+            {
+               new Person{Id=1,Company="deneme2",Name="Aylin",Surname="Hayat"},
+               new Person{Id=2,Company="deneme",Name="Hasan",Surname="Ali"},
+               new Person{Id=3,Company="deneme3",Name="Güneþ",Surname="Ateþ"}
+            };
 
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.Expression).Returns(data.Expression);
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            _mockSetContact.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
+            var personsMock= dataPersons.AsQueryable().BuildMockDbSet();
 
-
-            _mockContext.Setup(m => m.Contacts).Returns(_mockSetContact.Object);
+            _mockContext.Setup(m => m.Contacts).Returns(contactMock.Object);
+            _mockContext.Setup(m => m.Persons).Returns(personsMock.Object);
 
             _getAllContactsCommandHandler = new GetAllContactsQueryHandler(_mockContext.Object);
 

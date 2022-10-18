@@ -34,7 +34,7 @@ namespace ContactService.Application.Contacts.Queries
                     PhoneNumber = x.PhoneNumber,
                     PersonId = x.PersonId,
                     Id = x.Id
-                }) .ToListAsync();
+                }).ToListAsync();
             return Unit.Value;
         }
     }
