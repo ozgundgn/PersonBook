@@ -19,7 +19,9 @@ namespace ReportService.Infrastructure.Persistence
         {
             try
             {
-                await _context.Database.MigrateAsync();
+                if (_context.Database.GetDbConnection() == null)
+                    await _context.Database.MigrateAsync();
+
             }
             catch (Exception ex)
             {
@@ -45,10 +47,11 @@ namespace ReportService.Infrastructure.Persistence
         {
             // Default data
             // Seed, if necessary
+
             if (!_context.Reports.Any())
             {
 
-                _context.Reports.Add(new Report { CreatedDate=DateTime.Now,Path=@"c:\",State=0,Uuid=Guid.NewGuid() });
+                _context.Reports.Add(new Report { CreatedDate = DateTime.Now, Path = @"c:\", State = 0, Uuid = Guid.NewGuid() });
                 _context.Reports.Add(new Report { CreatedDate = DateTime.Now, Path = @"c:\", State = 0, Uuid = Guid.NewGuid() });
                 _context.Reports.Add(new Report { CreatedDate = DateTime.Now, Path = @"c:\", State = 0, Uuid = Guid.NewGuid() });
 
