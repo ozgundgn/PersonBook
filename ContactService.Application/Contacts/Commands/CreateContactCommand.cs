@@ -3,10 +3,11 @@ using ContactService.Application.Common.Interfaces;
 using ContactService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Application.Contacts.Commands
 {
-    public class CreateContactCommand : IRequest<int>
+    public class CreateContactCommand : IRequest<int>, IReturn<GeneralResponse<int>>
     {
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
@@ -14,7 +15,7 @@ namespace ContactService.Application.Contacts.Commands
         public int PersonId { get; set; }
         public int Id { get; set; }
     }
-    public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand,int>
+    public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, int>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -33,7 +34,7 @@ namespace ContactService.Application.Contacts.Commands
 
 
             var responseEntity = _context.Contacts.Add(entity);
-            var id= _context.SaveChangesAsync(cancellationToken);
+            var id = _context.SaveChangesAsync(cancellationToken);
             return id.Id;
         }
     }

@@ -59,7 +59,7 @@ namespace ReportService.Consumers
                     Uuid = @event.Uuid
                 };
 
-                ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/update", HttpMethod.Put, command);
+                ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/update", command);
 
 
                 //await _imediator.Send(command);

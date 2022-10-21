@@ -3,10 +3,11 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReportService.Application.Common.Interfaces;
 using ReportService.Domain.Entities;
+using ServiceConnectUtils.BaseModels;
 
 namespace ReportService.Application.Reports.Commands
 {
-    public class CreateReportCommand : IRequest<Guid>
+    public class CreateReportCommand : IRequest<Guid>, IReturn<GeneralResponse<Guid>>
     {
         public string Location { get; set; }
         public Guid Uuid { get; set; }

@@ -3,10 +3,11 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReportService.Application.Common.Interfaces;
+using ServiceConnectUtils.BaseModels;
 
 namespace ReportService.Application.Reports.Queries
 {
-    public record GetAllReportsQuery : IRequest<List<ReportDto>>
+    public record GetAllReportsQuery : IRequest<List<ReportDto>>, IReturn<GeneralResponse<List<ReportDto>>>
     {
 
     }

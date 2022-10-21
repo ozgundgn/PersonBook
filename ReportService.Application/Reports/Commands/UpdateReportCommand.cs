@@ -2,10 +2,11 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReportService.Application.Common.Interfaces;
+using ServiceConnectUtils.BaseModels;
 
 namespace ReportService.Application.Reports.Commands
 {
-    public record UpdateReportCommand : IRequest
+    public record UpdateReportCommand : IRequest, IReturn<GeneralResponse>
     {
         public string Path { get; set; }
         public Guid Uuid { get; set; }
@@ -31,7 +32,7 @@ namespace ReportService.Application.Reports.Commands
                 throw new ArgumentException(string.Format("There's nothing to update for uuid:{0}", request.Uuid));
             }
 
-           entity.CreatedDate = DateTime.Now;
+            entity.CreatedDate = DateTime.Now;
             entity.State = 1;
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using ContactService.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ContactService.Application.Persons.Queries
 {
-    public record GetAllPersonsQuery : IRequest<List<PersonDto>>
+    public record GetAllPersonsQuery : IRequest<List<PersonDto>>, IReturn<GeneralResponse<List<PersonDto>>>
     {
 
     }

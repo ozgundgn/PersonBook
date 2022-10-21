@@ -5,55 +5,68 @@ using Microsoft.AspNetCore.Mvc;
 using ReportService.Application.Reports.Commands;
 using ReportService.Application.Reports.Queries;
 using ServiceConnectUtils;
+using ServiceConnectUtils.BaseModels;
 using ServiceConnectUtils.Enums;
 
 namespace ReportService.Controllers
 {
     public class ReportsController : ApiControllerBase
     {
-       
+
         public ReportsController(IMediator mediator) : base(mediator)
         {
         }
+
         [HttpPost("create")]
-        public async Task<ActionResult<Guid>> Create(CreateReportCommand command)
+        public async Task<GeneralResponse<Guid>> Create(CreateReportCommand command)
         {
             command.Uuid = Guid.NewGuid();
-            var uuid = await _mediator.Send(command);
-            ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/preparereport", HttpMethod.Post, command);
 
-            return Ok(uuid);
+            var result= new GeneralResponse<Guid>()
+            {
+                Object = await _mediator.Send(command),
+            };
+
+            ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/preparereport", command);
+            return result;
         }
 
-        [HttpGet("getall")]
-        public async Task<ActionResult<IEnumerable<ReportDto>>> GetAll()
+        [HttpPost("getall")]
+        public async Task<GeneralResponse<IEnumerable<ReportDto>>> GetAll(GetAllReportsQuery command)
         {
-            return await _mediator.Send(new GetAllReportsQuery());
+            return new GeneralResponse<IEnumerable<ReportDto>>()
+            {
+                Object = await _mediator.Send(command)
+            };
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            await _mediator.Send(new DeleteReportCommand(id));
-            return NoContent();
-        }
-
-        [HttpPut("update")]
-        public async Task<ActionResult> Update( UpdateReportCommand command)
+        [HttpPost("delete")]
+        public async Task<GeneralResponse> Delete(DeleteReportCommand command)
         {
             await _mediator.Send(command);
-            return NoContent();
+            return new GeneralResponse();
+        }
+
+        [HttpPost("update")]
+        public async Task<GeneralResponse> Update(UpdateReportCommand command)
+        {
+            await _mediator.Send(command);
+            return new GeneralResponse();
         }
 
 
-        [HttpGet("getbylocation")]
-        public async Task<ActionResult<List<ReportDto>>> GetReportsByLocationQuery(GetReportsByLocationQuery command)
+        [HttpPost("getbylocation")]
+        public async Task<GeneralResponse<List<ReportDto>>> GetReportsByLocationQuery(GetReportsByLocationQuery command)
         {
+            var result = new GeneralResponse<List<ReportDto>>();
             if (string.IsNullOrEmpty(command.Location))
-                return BadRequest();
+            {
+                result.Success = false;
+                result.Message = "Location is empty.";
 
-            return await _mediator.Send(command);
-
+            }
+            result.Object = await _mediator.Send(command);
+            return result;
         }
     }
 }
