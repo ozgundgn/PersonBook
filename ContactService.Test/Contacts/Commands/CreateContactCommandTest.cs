@@ -16,7 +16,6 @@ namespace ContactService.Test.Contacts.Commands
         //private readonly Mock<IRequestHandler<CreateContactCommand,int>> _createContactCommandHandlerMock;
         private Mock<ContactDbContext> _mockContext;
         private Mock<DbSet<Contact>> _mockSetContact;
-        //private readonly Mock<IMapper> mapper;
 
         private readonly CreateContactCommandHandler _createContactCommandHandler;
 
@@ -38,21 +37,10 @@ namespace ContactService.Test.Contacts.Commands
         public async Task CreateContactCommand_SimpleDataSend_ReturnsEquals(CreateContactCommand contact)
         {
             //Arrange
-            //var model = new CreateContactCommand()
-            //{
-            //    Id = 1,
-            //    PersonId = 1,
-            //    Email = "dddd@aaa.com",
-            //    Location = "",
-            //    PhoneNumber = "00000000000"
-            //};
-
-            //var mockSet = new Mock<DbSet<Contact>>();
+            
 
             // Act
             var result = await _createContactCommandHandler.Handle(contact, new CancellationToken());
-            //mockSet.Verify(m => m.Add(It.IsAny<Contact>()), Times.Once());
-            //mockContext.Verify(m => m.SaveChanges(), Times.Once());
 
             // Assert
             Assert.IsType<int>(result);

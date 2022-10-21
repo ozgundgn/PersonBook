@@ -2,6 +2,7 @@
 using ContactService.Application.Contacts.Queries;
 using ContactService.Application.Persons.Commands;
 using ContactService.Application.Persons.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ using PhoneBook.UI.Models;
 using ReportService.Application.Reports.Commands;
 using ReportService.Application.Reports.Queries;
 using ServiceConnectUtils;
+using ServiceConnectUtils.BaseModels;
 using ServiceConnectUtils.Enums;
 using System.Diagnostics;
 
@@ -29,13 +31,12 @@ namespace PhoneBook.UI.Controllers
             return View();
         }
 
-        public IActionResult PersonList()
+        public IActionResult PersonList(GetAllPersonsQuery request)
         {
-            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "persons/getall");
-            if (result != null && result.Count() > 0)
+            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "persons/getall", request);
+            if (result != null && result.Object.Count() > 0)
             {
-                var persons = JsonConvert.DeserializeObject<List<PersonDto>>(result);
-                var res = new { data = persons };
+                var res = new { data = result.Object };
                 return new JsonResult(res);
             }
             return Ok();
@@ -43,14 +44,14 @@ namespace PhoneBook.UI.Controllers
 
         public IActionResult PersonSave(CreatePersonCommand request)
         {
+
             if (string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Surname))
             {
                 return BadRequest();
             }
             var apiMetod = request.Id > 0 ? "persons/update" : "persons/create";
-            HttpMethod method = request.Id > 0 ? HttpMethod.Put : HttpMethod.Post;
-            ServiceConnect.Get(ServiceTypeEnum.ContactService, apiMetod, method, request);
-            return Ok();
+            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, apiMetod, request);
+            return Ok(result);
         }
 
         public IActionResult PersonDelete(int id)
@@ -58,46 +59,39 @@ namespace PhoneBook.UI.Controllers
             if (id <= 0)
                 return BadRequest();
 
-            ServiceConnect.Get(ServiceTypeEnum.ContactService, "persons/" + id, HttpMethod.Delete, id);
+            ServiceConnect.Get(ServiceTypeEnum.ContactService, "persons/delete", new DeleteContactCommand(id));
             return Ok();
         }
         #endregion
 
         #region Contacts
-        public IActionResult Contact()
+        public IActionResult Contact(GetAllContactsQuery request)
         {
-            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "persons/getall");
-            if (result.Any())
+            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "persons/getall", request);
+            if (result != null && result.Object != null && result.Object.Any())
             {
-                var persons = JsonConvert.DeserializeObject<List<PersonDto>>(result);
-                if (persons != null && persons.Count() > 0)
+                ViewBag.Persons = result.Object.Select(x => new SelectListItem
                 {
-                    ViewBag.Persons = persons.Select(x => new SelectListItem
-                    {
-                        Value = x.Id.ToString(),
-                        Text = x.FullName
-                    }).ToList();
-                }
+                    Value = x.Id.ToString(),
+                    Text = x.FullName
+                }).ToList();
             }
             return View();
         }
         public IActionResult ContactList(int personId)
         {
-            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/getall");
-            if (result.Any())
-            {
-                var contacts = JsonConvert.DeserializeObject<List<ContactDto>>(result);
-                if (personId > 0 && contacts != null && contacts.Any())
-                {
-                    var resPersons = new { data = contacts.Where(x => x.PersonId == personId).ToList() };
-                    return new JsonResult(resPersons);
-                }
-                var res = new { data = contacts };
-                return new JsonResult(res);
-            }
+            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/getall", new GetAllContactsQuery());
 
-            return Ok();
+            if (personId > 0 && result != null && result.Object != null && result.Object.Any())
+            {
+                var resPersons = new { data = result.Object.Where(x => x.PersonId == personId).ToList() };
+                return new JsonResult(resPersons);
+            }
+            var res = new { data = result.Object };
+            return new JsonResult(res);
         }
+
+
         public IActionResult ContactSave(CreateContactCommand request)
         {
             if (string.IsNullOrEmpty(request.Location) || string.IsNullOrEmpty(request.PhoneNumber) || request.PersonId <= 0)
@@ -105,9 +99,7 @@ namespace PhoneBook.UI.Controllers
                 return BadRequest();
             }
             var apiMetod = request.Id > 0 ? "contacts/update" : "contacts/create";
-            HttpMethod method = request.Id > 0 ? HttpMethod.Put : HttpMethod.Post;
-            ServiceConnect.Get(ServiceTypeEnum.ContactService, apiMetod, method, request);
-
+            ServiceConnect.Get(ServiceTypeEnum.ContactService, apiMetod, request);
             return Ok();
         }
 
@@ -116,45 +108,40 @@ namespace PhoneBook.UI.Controllers
             if (id <= 0)
                 return BadRequest();
 
-            ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/" + id, HttpMethod.Delete, id);
+            ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/delete", new DeleteContactCommand(id));
             return Ok();
         }
-        #endregion
+        //#endregion
 
-        #region Reports
+        //#region Reports
         public IActionResult Report()
         {
-            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/getall");
-            if (result.Any())
+            var result = ServiceConnect.Get(ServiceTypeEnum.ContactService, "contacts/getall", new GetAllContactsQuery());
+            if (result != null && result.Object != null && result.Object.Any())
             {
-                var locations = JsonConvert.DeserializeObject<List<ContactDto>>(result);
-                if (locations != null && locations.Count() > 0)
+                var a = result.Object.GroupBy(x => x.Location).Select(grp => grp.ToList());
+
+                ViewBag.Locations = result.Object.GroupBy(x => x.Location).ToList().Select(x => new SelectListItem
                 {
+                    Value = x.Key,
+                    Text = x.Key
+                }).ToList();
 
-                    var a = locations.GroupBy(x => x.Location).Select(grp => grp.ToList());
-
-                    ViewBag.Locations = locations.GroupBy(x => x.Location).ToList().Select(x => new SelectListItem
-                    {
-                        Value = x.Key,
-                        Text = x.Key
-                    }).ToList();
-                }
             }
             return View();
         }
 
         public IActionResult ReportList(string location)
         {
-            var result = ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/getall");
-            if (result.Any())
+            var result = ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/getall", new GetAllReportsQuery());
+            if (result != null && result.Object != null && result.Object.Any())
             {
-                var reports = JsonConvert.DeserializeObject<List<ReportDto>>(result);
                 if (!string.IsNullOrWhiteSpace(location))
                 {
-                    var resReports = new { data = reports.Where(x => x.Path == location).ToList() };
+                    var resReports = new { data = result.Object.Where(x => x.Path == location).ToList() };
                     return new JsonResult(resReports);
                 }
-                var res = new { data = reports };
+                var res = new { data = result.Object };
                 return new JsonResult(res);
             }
 
@@ -164,7 +151,7 @@ namespace PhoneBook.UI.Controllers
 
         public IActionResult CreateReport(CreateReportCommand request)
         {
-            ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/create", HttpMethod.Post, request);
+            ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/create", request);
             return Ok();
         }
 
@@ -174,9 +161,9 @@ namespace PhoneBook.UI.Controllers
             if (id <= 0)
                 return BadRequest();
 
-            ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/" + id, HttpMethod.Delete, id);
+            ServiceConnect.Get(ServiceTypeEnum.ReportService, "reports/delete", new DeleteReportCommand(id));
             return Ok();
-        } 
+        }
         #endregion
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

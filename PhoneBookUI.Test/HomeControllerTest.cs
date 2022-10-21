@@ -1,5 +1,6 @@
 using Castle.Core.Logging;
 using ContactService.Application.Persons.Commands;
+using ContactService.Application.Persons.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -27,7 +28,7 @@ namespace PhoneBookUI.Test
             // Act
             var result = controller.Index();
             // Assert
-             Assert.IsType<ViewResult>(result);
+            Assert.IsType<ViewResult>(result);
         }
 
 
@@ -37,7 +38,7 @@ namespace PhoneBookUI.Test
             // Arrange
             var controller = new HomeController(_logger);
             // Act
-            var result = controller.PersonList();
+            var result = controller.PersonList(new GetAllPersonsQuery());
             // Assert
             Assert.IsType<OkResult>(result);
         }
@@ -56,7 +57,7 @@ namespace PhoneBookUI.Test
         }
 
 
-        
+
         [Theory]
         [InlineData(1)]
         [InlineData(2)]

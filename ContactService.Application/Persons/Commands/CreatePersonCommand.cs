@@ -3,10 +3,11 @@ using ContactService.Application.Common.Interfaces;
 using ContactService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Application.Persons.Commands
 {
-    public class CreatePersonCommand : IRequest<Guid>
+    public class CreatePersonCommand : IRequest<Guid>, IReturn<GeneralResponse<Guid>>
     {
         public int Id { get; set; }
         public Guid Uuid { get; set; }

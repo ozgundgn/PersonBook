@@ -2,10 +2,11 @@
 using ContactService.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Application.Contacts.Queries
 {
-    public record GetAllContactsQuery : IRequest<List<ContactDto>>
+    public record GetAllContactsQuery : IRequest<List<ContactDto>>, IReturn<GeneralResponse<List<ContactDto>>>
     {
 
     }

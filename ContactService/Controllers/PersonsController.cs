@@ -6,6 +6,7 @@ using ContactService.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Controllers
 {
@@ -16,43 +17,58 @@ namespace ContactService.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Guid>> Create(CreatePersonCommand command)
+        public async Task<GeneralResponse<Guid>> Create(CreatePersonCommand command)
         {
-            
-            return await _mediator.Send(command);
+            return new GeneralResponse<Guid>()
+            {
+                Object = await _mediator.Send(command)
+            };
         }
 
-        [HttpGet("getall")]
-        public async Task<ActionResult<IEnumerable<PersonDto>>> GetAll()
+        [HttpPost("getall")]
+        public async Task<GeneralResponse<IEnumerable<PersonDto>>> GetAll(GetAllPersonsQuery request)
         {
-            return await _mediator.Send(new GetAllPersonsQuery());
+            return new GeneralResponse<IEnumerable<PersonDto>>
+            {
+                Object = await _mediator.Send(request)
+            };
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpPost("delete")]
+        public async Task<GeneralResponse> Delete(DeletePersonCommand request)
         {
-            await _mediator.Send(new DeletePersonCommand(id));
-            return NoContent();
+            await _mediator.Send(request);
+            return new GeneralResponse { };
         }
 
-        [HttpPut("update")]
-        public async Task<ActionResult> Update( UpdatePersonCommand command)
+        [HttpPost("update")]
+        public async Task<GeneralResponse> Update(UpdatePersonCommand command)
         {
+            var result = new GeneralResponse();
             if (command.Id <= 0)
-                return BadRequest();
-
+            {
+                result.Success = false;
+                result.Message = "Person has invalid value of id";
+            }
             await _mediator.Send(command);
-            return NoContent();
+            return result;
         }
 
 
-        [HttpGet("getbylocation")]
-        public async Task<ActionResult<List<PersonDto>>> GetPersonsByLocationQuery(GetPersonsByLocationQuery command)
+        [HttpPost("getbylocation")]
+        public async Task<GeneralResponse<List<PersonDto>>> GetPersonsByLocationQuery(GetPersonsByLocationQuery command)
         {
-            if (string.IsNullOrEmpty(command.Location))
-                return BadRequest();
+            var result = new GeneralResponse<List<PersonDto>>();
 
-            return await _mediator.Send(command);
+            if (string.IsNullOrEmpty(command.Location))
+            {
+                result.Success = false;
+                result.Message = "Person has invalid value of location";
+            }
+
+            result.Object= await _mediator.Send(command); 
+
+            return result;
 
         }
     }

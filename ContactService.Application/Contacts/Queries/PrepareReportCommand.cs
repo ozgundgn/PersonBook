@@ -1,10 +1,11 @@
 ﻿using ContactService.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Application.Contacts.Queries
 {
-    public record PrepareReportCommand : IRequest
+    public record PrepareReportCommand : IRequest, IReturn<GeneralResponse>
     {
         public string Location { get; set; }
         public int PersonsCount { get; set; }

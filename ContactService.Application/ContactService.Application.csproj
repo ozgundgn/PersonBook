@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ContactService.Domain\ContactService.Domain.csproj" />
+    <ProjectReference Include="..\ServiceConnectUtils\ServiceConnectUtils.csproj" />
   </ItemGroup>
 
 </Project>

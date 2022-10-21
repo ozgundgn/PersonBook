@@ -5,6 +5,7 @@ using EventRabbitMQ.Core;
 using EventRabbitMQ.Events;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Controllers
 {
@@ -19,59 +20,85 @@ namespace ContactService.Controllers
             _logger = logger;
         }
         [HttpPost("create")]
-        public async Task<ActionResult<int>> Create(CreateContactCommand command)
+        public async Task<GeneralResponse<int>> Create(CreateContactCommand command)
         {
-            return await _mediator.Send(command);
+            return new GeneralResponse<int>
+            {
+                Object = await _mediator.Send(command)
+            };
         }
 
-        [HttpGet("getall")]
-        public async Task<ActionResult<IEnumerable<ContactDto>>> GetAll()
+        [HttpPost("getall")]
+        public async Task<GeneralResponse<IEnumerable<ContactDto>>> GetAll(GetAllContactsQuery request)
         {
-            return await _mediator.Send(new GetAllContactsQuery());
+            return new GeneralResponse<IEnumerable<ContactDto>>
+            {
+                Object = await _mediator.Send(request)
+            };
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpPost("delete")]
+        public async Task<GeneralResponse> Delete(DeleteContactCommand request)
         {
-            await _mediator.Send(new DeleteContactCommand(id));
-            return NoContent();
+            var result = new GeneralResponse();
+            if (request.Id <= 0)
+            {
+                result.Success = false;
+                result.Message = "Invalid contact id";
+            }
+
+            await _mediator.Send(request);
+            return result;
         }
 
-        [HttpPut("update")]
-        public async Task<ActionResult> Update(UpdateContactCommand command)
+        [HttpPost("update")]
+        public async Task<GeneralResponse> Update(UpdateContactCommand request)
         {
-            if (command.Id <= 0)
-                return BadRequest();
+            var result = new GeneralResponse();
 
-            await _mediator.Send(command);
-            return NoContent();
+            if (request.Id <= 0)
+            {
+                result.Success = false;
+                result.Message = "Invalid contact id";
+            }
+            await _mediator.Send(request);
+
+            return result;
         }
 
 
-        [HttpGet("getbylocation")]
-        public async Task<ActionResult<List<ContactDto>>> GetContactsByLocationQuery(GetContactsByLocationQuery command)
+        [HttpPost("getbylocation")]
+        public async Task<GeneralResponse<List<ContactDto>>> GetContactsByLocationQuery(GetContactsByLocationQuery request)
         {
-            return await _mediator.Send(command);
+            return new GeneralResponse<List<ContactDto>>
+            {
+                Object = await _mediator.Send(request)
+            };
         }
 
         [HttpPost("preparereport")]
 
-        public async Task<ActionResult> PrepareReport(PrepareReportCommand command)
+        public async Task<GeneralResponse> PrepareReport(PrepareReportCommand request)
         {
-            if (string.IsNullOrWhiteSpace(command.Location))
-                return BadRequest();
+            var result = new GeneralResponse();
+            if (string.IsNullOrWhiteSpace(request.Location))
+            {
+                result.Success = false;
+                result.Message = "There is no location to report.";
+
+            }
 
             var contactsByLocation = await _mediator.Send(new GetContactsByLocationQuery()
             {
-                Location = command.Location,
+                Location = request.Location,
             });
 
             ReportCreatedEvent reportMessage = new ReportCreatedEvent()
             {
-                Uuid = command.Uuid,
+                Uuid = request.Uuid,
                 PhoneNumbersCount = contactsByLocation.Count,
                 PersonsCount = contactsByLocation.GroupBy(x => x.PersonId).Count(),
-                Location=command.Location
+                Location = request.Location
             };
             try
             {
@@ -83,7 +110,7 @@ namespace ContactService.Controllers
 
                 throw;
             }
-            return Ok();
+            return result;
 
         }
     }

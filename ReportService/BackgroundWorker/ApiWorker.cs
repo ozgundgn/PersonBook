@@ -15,7 +15,7 @@ namespace ReportService.BackgroundWorker
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _loger.LogInformation("Bende Seni çoooooooooooooooooook Seviyorum");
+            _loger.LogInformation("Geldi de consume ediyor");
             _rabbitMq.Consume();
             return Task.CompletedTask;
         }

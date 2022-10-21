@@ -2,10 +2,11 @@
 using ContactService.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ServiceConnectUtils.BaseModels;
 
 namespace ContactService.Application.Contacts.Queries
 {
-    public record GetContactsByLocationQuery : IRequest<List<ContactDto>>
+    public record GetContactsByLocationQuery : IRequest<List<ContactDto>>, IReturn<GeneralResponse<List<ContactDto>>>
     {
         public string? Location { get; set; }
     }
@@ -14,7 +15,7 @@ namespace ContactService.Application.Contacts.Queries
     {
         private readonly IApplicationDbContext _context;
 
-        public GetContactsByLocationQueryHandler(IApplicationDbContext context )
+        public GetContactsByLocationQueryHandler(IApplicationDbContext context)
         {
             _context = context;
         }

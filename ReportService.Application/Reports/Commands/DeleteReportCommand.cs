@@ -1,10 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReportService.Application.Common.Interfaces;
+using ServiceConnectUtils.BaseModels;
 
 namespace ReportService.Application.Reports.Commands
 {
-    public record DeleteReportCommand(int Id) : IRequest;
+    public record DeleteReportCommand(int Id) : IRequest, IReturn<GeneralResponse>;
     public class DeleteReportCommandHandler : IRequestHandler<DeleteReportCommand>
     {
         private readonly IApplicationReportDbContext _context;
