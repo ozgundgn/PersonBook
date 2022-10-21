@@ -20,7 +20,8 @@ namespace ContactService.Infrastructure.Persistence
         {
             try
             {
-                await _context.Database.MigrateAsync();
+                if(_context.Database.GetDbConnection() == null)
+                   await _context.Database.MigrateAsync();
             }
             catch (Exception ex)
             {
